@@ -1,7 +1,5 @@
-<!-- cv-analizer.component.html -->
 <div class="chat-container">
 
-  <!-- Sidebar (opcional, pero da el look de ChatGPT) -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <button mat-icon-button>
@@ -45,7 +43,6 @@
     <div class="messages-area" #messagesContainer>
 
       @if (messages().length === 1) {
-      <!-- Empty State - Solo mensaje inicial -->
       <div class="empty-state">
         <div class="empty-icon">
           <mat-icon>description</mat-icon>
@@ -67,12 +64,10 @@
       }
 
       @else {
-      <!-- Messages List -->
       <div class="messages-list">
         @for (message of messages(); track $index) {
 
         @if ($index > 0) {
-        <!-- Skip first bot message in messages view -->
         <div class="message-wrapper" [class.user-wrapper]="message.type === 'user'">
 
           <!-- User Message -->
@@ -93,7 +88,6 @@
           </div>
           }
 
-          <!-- Bot Message -->
           @else if (message.type === 'bot') {
           <div class="message bot-message">
             <div class="message-avatar bot-avatar">
@@ -108,11 +102,9 @@
                 {{ message.content }}
               </div>
 
-              <!-- Analysis Card -->
               @if (message.data) {
               <div class="analysis-card">
 
-                <!-- Overall Score Badge -->
                 <div class="overall-score" [class.score-high]="message.data.overall_score >= 7"
                   [class.score-medium]="message.data.overall_score >= 5 && message.data.overall_score < 7"
                   [class.score-low]="message.data.overall_score < 5">
@@ -125,7 +117,6 @@
                   </div>
                 </div>
 
-                <!-- Quick Info -->
                 <div class="quick-info">
                   <div class="info-item">
                     <mat-icon>work</mat-icon>
@@ -143,7 +134,6 @@
                   }
                 </div>
 
-                <!-- Scores Grid -->
                 <div class="scores-section">
                   <h3>📊 Evaluación Detallada</h3>
                   <div class="scores-grid">
@@ -189,7 +179,6 @@
                   </div>
                 </div>
 
-                <!-- Feedback Sections -->
                 <div class="feedback-grid">
                   @if (message.data.positive_points.length > 0) {
                   <div class="feedback-box success">
@@ -225,7 +214,6 @@
                   }
                 </div>
 
-                <!-- Badges -->
                 <div class="badges-section">
                   @if (message.data.has_github) {
                   <span class="badge success">
@@ -254,7 +242,6 @@
           </div>
           }
 
-          <!-- Loading Message -->
           @else if (message.type === 'loading') {
           <div class="message bot-message">
             <div class="message-avatar bot-avatar">
@@ -278,7 +265,6 @@
       }
     </div>
 
-    <!-- Input Area -->
     <footer class="chat-footer">
       <div class="input-container">
         <input type="file" id="fileInput" accept=".pdf" (change)="onFileSelected($event)" style="display: none;" />
