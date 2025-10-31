@@ -1,0 +1,287 @@
+<div class="chat-container">
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <button mat-icon-button>
+        <mat-icon>menu</mat-icon>
+      </button>
+      <h2>CV Analyzer AI</h2>
+    </div>
+
+    <div class="sidebar-content">
+      <button mat-stroked-button class="new-chat-btn">
+        <mat-icon>add</mat-icon>
+        Nuevo Análisis
+      </button>
+
+      <div class="recent-chats">
+        <p class="recent-title">Recientes</p>
+        <!-- Aquí irían análisis previos si quieres guardar historial -->
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <mat-icon>account_circle</mat-icon>
+        <span>Usuario</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Chat Area -->
+  <main class="chat-main">
+
+    <!-- Header -->
+    <header class="chat-header">
+      <div class="header-content">
+        <mat-icon class="header-icon">psychology</mat-icon>
+        <h1>Analizador de CVs con IA</h1>
+      </div>
+    </header>
+
+    <!-- Messages Area -->
+    <div class="messages-area" #messagesContainer>
+
+      @if (messages().length === 1) {
+      <div class="empty-state">
+        <div class="empty-icon">
+          <mat-icon>description</mat-icon>
+        </div>
+        <h2>Sube un CV para comenzar</h2>
+        <p>Analiza currículums con inteligencia artificial y obtén feedback detallado</p>
+
+        <div class="suggestions">
+          <button mat-stroked-button class="suggestion-chip" (click)="triggerFileInput()">
+            <mat-icon>upload_file</mat-icon>
+            Subir CV en PDF
+          </button>
+          <button mat-stroked-button class="suggestion-chip">
+            <mat-icon>help_outline</mat-icon>
+            ¿Cómo funciona?
+          </button>
+        </div>
+      </div>
+      }
+
+      @else {
+      <div class="messages-list">
+        @for (message of messages(); track $index) {
+
+        @if ($index > 0) {
+        <div class="message-wrapper" [class.user-wrapper]="message.type === 'user'">
+
+          <!-- User Message -->
+          @if (message.type === 'user') {
+          <div class="message user-message">
+            <div class="message-avatar">
+              <mat-icon>person</mat-icon>
+            </div>
+            <div class="message-content">
+              <div class="message-header">
+                <span class="message-author">Tú</span>
+              </div>
+              <div class="message-text">
+                <mat-icon class="file-icon">picture_as_pdf</mat-icon>
+                {{ message.fileName || message.content }}
+              </div>
+            </div>
+          </div>
+          }
+
+          @else if (message.type === 'bot') {
+          <div class="message bot-message">
+            <div class="message-avatar bot-avatar">
+              <mat-icon>smart_toy</mat-icon>
+            </div>
+            <div class="message-content">
+              <div class="message-header">
+                <span class="message-author">CV Analyzer AI</span>
+              </div>
+
+              <div class="message-text">
+                {{ message.content }}
+              </div>
+
+              @if (message.data) {
+              <div class="analysis-card">
+
+                <div class="overall-score" [class.score-high]="message.data.overall_score >= 7"
+                  [class.score-medium]="message.data.overall_score >= 5 && message.data.overall_score < 7"
+                  [class.score-low]="message.data.overall_score < 5">
+                  <div class="score-circle">
+                    <span class="score-number">{{ message.data.overall_score }}</span>
+                    <span class="score-max">/10</span>
+                  </div>
+                  <div class="score-label">
+                    {{ message.data.is_valid_candidate ? '✅ Candidato Apto' : '❌ No Cumple' }}
+                  </div>
+                </div>
+
+                <div class="quick-info">
+                  <div class="info-item">
+                    <mat-icon>work</mat-icon>
+                    <span>{{ message.data.years_experience }} años exp.</span>
+                  </div>
+                  <div class="info-item">
+                    <mat-icon>email</mat-icon>
+                    <span>{{ message.data.candidate_email || 'No detectado' }}</span>
+                  </div>
+                  @if (message.data.email_sent) {
+                  <div class="info-item success">
+                    <mat-icon>check_circle</mat-icon>
+                    <span>Email enviado</span>
+                  </div>
+                  }
+                </div>
+
+                <div class="scores-section">
+                  <h3>📊 Evaluación Detallada</h3>
+                  <div class="scores-grid">
+                    <div class="score-bar">
+                      <div class="score-bar-header">
+                        <span>Formación</span>
+                        <strong>{{ message.data.education_score }}/10</strong>
+                      </div>
+                      <div class="score-bar-track">
+                        <div class="score-bar-fill" [style.width.%]="message.data.education_score * 10"></div>
+                      </div>
+                    </div>
+
+                    <div class="score-bar">
+                      <div class="score-bar-header">
+                        <span>Formato CV</span>
+                        <strong>{{ message.data.format_score }}/10</strong>
+                      </div>
+                      <div class="score-bar-track">
+                        <div class="score-bar-fill" [style.width.%]="message.data.format_score * 10"></div>
+                      </div>
+                    </div>
+
+                    <div class="score-bar">
+                      <div class="score-bar-header">
+                        <span>Experiencia</span>
+                        <strong>{{ message.data.experience_score }}/10</strong>
+                      </div>
+                      <div class="score-bar-track">
+                        <div class="score-bar-fill" [style.width.%]="message.data.experience_score * 10"></div>
+                      </div>
+                    </div>
+
+                    <div class="score-bar">
+                      <div class="score-bar-header">
+                        <span>Habilidades</span>
+                        <strong>{{ message.data.skills_score }}/10</strong>
+                      </div>
+                      <div class="score-bar-track">
+                        <div class="score-bar-fill" [style.width.%]="message.data.skills_score * 10"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="feedback-grid">
+                  @if (message.data.positive_points.length > 0) {
+                  <div class="feedback-box success">
+                    <h4><mat-icon>check_circle</mat-icon> Fortalezas</h4>
+                    <ul>
+                      @for (point of message.data.positive_points; track $index) {
+                      <li>{{ point }}</li>
+                      }
+                    </ul>
+                  </div>
+                  }
+
+                  @if (message.data.improvements.length > 0) {
+                  <div class="feedback-box warning">
+                    <h4><mat-icon>warning</mat-icon> Por Mejorar</h4>
+                    <ul>
+                      @for (improvement of message.data.improvements; track $index) {
+                      <li>{{ improvement }}</li>
+                      }
+                    </ul>
+                  </div>
+                  }
+
+                  @if (message.data.suggestions.length > 0) {
+                  <div class="feedback-box info">
+                    <h4><mat-icon>lightbulb</mat-icon> Sugerencias</h4>
+                    <ul>
+                      @for (suggestion of message.data.suggestions; track $index) {
+                      <li>{{ suggestion }}</li>
+                      }
+                    </ul>
+                  </div>
+                  }
+                </div>
+
+                <div class="badges-section">
+                  @if (message.data.has_github) {
+                  <span class="badge success">
+                    <mat-icon>code</mat-icon> GitHub
+                  </span>
+                  }
+                  @if (message.data.has_portfolio) {
+                  <span class="badge success">
+                    <mat-icon>web</mat-icon> Portfolio
+                  </span>
+                  }
+                  @if (message.data.is_university_graduate) {
+                  <span class="badge info">
+                    <mat-icon>school</mat-icon> Universitario
+                  </span>
+                  }
+                  @if (message.data.is_from_peru) {
+                  <span class="badge">
+                    <mat-icon>place</mat-icon> Perú
+                  </span>
+                  }
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+          }
+
+          @else if (message.type === 'loading') {
+          <div class="message bot-message">
+            <div class="message-avatar bot-avatar">
+              <mat-spinner diameter="24"></mat-spinner>
+            </div>
+            <div class="message-content">
+              <div class="message-header">
+                <span class="message-author">CV Analyzer AI</span>
+              </div>
+              <div class="message-text typing">
+                Analizando curriculum...
+              </div>
+            </div>
+          </div>
+          }
+
+        </div>
+        }
+        }
+      </div>
+      }
+    </div>
+
+    <footer class="chat-footer">
+      <div class="input-container">
+        <input type="file" id="fileInput" accept=".pdf" (change)="onFileSelected($event)" style="display: none;" />
+
+        <div class="input-wrapper">
+          <button mat-fab extended color="primary" (click)="triggerFileInput()" [disabled]="isAnalyzing()"
+            class="upload-button">
+            <mat-icon>{{ isAnalyzing() ? 'hourglass_empty' : 'upload_file' }}</mat-icon>
+            {{ isAnalyzing() ? 'Analizando...' : 'Subir CV (PDF)' }}
+          </button>
+        </div>
+
+        <p class="input-hint">
+          Soporta archivos PDF de hasta 5MB
+        </p>
+      </div>
+    </footer>
+
+  </main>
+</div>
