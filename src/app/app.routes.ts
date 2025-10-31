@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
+import DashboardLayout from './shared/layouts/dashboard-layout/dashboard-layout';
 
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./shared/layouts/dashboard-layout/dashboard-layout'),
+    component: DashboardLayout,
     children: [
       {
         path: 'cv-analizer',
